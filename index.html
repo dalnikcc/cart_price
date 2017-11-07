@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>cart</title>
+	<style>
+		.buy_item {
+			width: 99%;
+			padding: 60px 0;
+			border-bottom: 1px solid #eaeaea;
+		}
+		div {
+			float: left;
+			margin: 0 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="buy_item">
+		<div class="new_price">
+			<span class="price">88 </span>
+			<span class="currency">грн</span>
+		</div>
+		<div class="byu_item_quantity">
+			<span class="plus"><img src="images/plus.png" alt=""></span>
+			<input class="cart_qty" type="text" name="qty" value="1" size="1" maxlength="3">
+			<span class="minus"><img src="images/minus.png" alt=""></span>
+		</div>
+		<div class="byu_item_total">
+			<p class="_item_total"><span ></span> грн.</p>
+		</div>
+		<div class="delete_prod"><img src="images/delete.png" alt=""></div>
+	</div>
+	<div class="buy_item">
+		<div class="new_price">
+			<span class="price">456 </span>
+			<span class="currency">грн</span>
+		</div>
+		<div class="byu_item_quantity">
+			<span class="plus"><img src="images/plus.png" alt=""></span>
+			<input class="cart_qty" type="text" name="qty" value="1" size="1" maxlength="3">
+			<span class="minus"><img src="images/minus.png" alt=""></span>
+		</div>
+		<div class="byu_item_total">
+			<p class="_item_total"><span ></span> грн.</p>
+		</div>
+		<div class="delete_prod"><img src="images/delete.png" alt=""></div>
+	</div>
+	<div class="total_price">
+
+		<p class="total_sum">Итого к оплате: <span id="totalPrice"></span> <span class="currency"> грн.</span></p>
+	</div>
+	<script
+	src="https://code.jquery.com/jquery-3.2.1.min.js"
+	integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	crossorigin="anonymous"></script>
+	<script>
+		//-----------------------
+//cart page
+//-----------------------
+
+
+
+
+
+$('.buy_item').each(function(){
+
+//item total price 
+var priceText = $('.price', this).text();
+$('._item_total span', this).text(priceText)
+
+
+var product_qty = 1;
+var product_price = +$('._item_total span' ,this).text();
+
+//keyup
+$('.cart_qty', this).on('keyup', function(e) {
+	var _this = $(this);
+    // test
+    if (/\D/g.test(_this.val())) {
+    	_this.val(_this.val().replace(/\D/g, ''));
+    }
+    // limit
+    if (_this.val() > 999) {
+    	_this.val(999);
+    }
+    product_qty = +this.value;
+
+    //change price for this product
+    if($('.buy_item').length){
+    	$(this).parents('.buy_item').find('.cart_qty').attr('value', product_qty)
+    	$(this).parents('.buy_item').find('._item_total span').text(product_price * product_qty)
+    	getTotal()
+    }
+});
+
+//plus-minus
+$('.plus', this).on('click', function(e){
+	var plusNum = product_qty += 1;
+
+		//if > 1
+		if(plusNum > 999) {
+			plusNum = 999;
+		}
+
+		//change quantity
+		$(this).siblings('.cart_qty').val(plusNum);
+		$(this).siblings('.cart_qty').attr('value', plusNum);
+
+		//change price for this product
+		if($('.buy_item').length){
+			$(this).parents('.buy_item').find('._item_total span').text(product_price * plusNum)
+			getTotal()
+		}
+	});
+
+$('.minus', this).on('click', function(e){
+	var minusNum = product_qty -= 1;
+
+		//if < 1
+		if(minusNum < 1) {
+			minusNum = 1;
+		}
+		
+		//change quantity
+		$(this).siblings('.cart_qty').val(minusNum);
+		$(this).siblings('.cart_qty').attr('value', minusNum);
+
+		//change price for this product
+		if($('.buy_item').length){
+			$(this).parents('.buy_item').find('._item_total span').text(product_price * minusNum)
+			getTotal()
+		}
+	});
+});
+
+//total price
+function getTotal(){
+	var _total = 0;
+	
+	$('._item_total span').each(function(){
+		_total += +$(this).text();
+	});
+	$('#totalPrice').text(_total)
+}
+getTotal()
+
+//delete prod
+$('.delete_prod').on('click', function(){
+	$(this).parents('.buy_item').hide(300);
+	$('#totalPrice').text(+$('#totalPrice').text() - +$(this).parents('.buy_item').find('._item_total span').text())
+});
+//-----------------------
+//end cart page
+//-----------------------
+
+</script>
+</body>
+</html>
